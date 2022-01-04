@@ -3,7 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/hoan_chinh/HK4/Mobile/exercise/voice_recorder/app/src/main/res/layout/activity_main.xml" value="0.21666666666666667" />
+        <entry key="..\:/hoan_chinh/HK4/Mobile/exercise/voice_recorder/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2703125" />
+        <entry key="..\:/hoan_chinh/HK4/Mobile/exercise/voice_recorder/app/src/main/res/drawable/media_header_bg.xml" value="0.1662162162162162" />
+        <entry key="..\:/hoan_chinh/HK4/Mobile/exercise/voice_recorder/app/src/main/res/drawable/player_bg.xml" value="0.1662162162162162" />
+        <entry key="..\:/hoan_chinh/HK4/Mobile/exercise/voice_recorder/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/hoan_chinh/HK4/Mobile/exercise/voice_recorder/app/src/main/res/layout/fragment_list.xml" value="0.1" />
+        <entry key="..\:/hoan_chinh/HK4/Mobile/exercise/voice_recorder/app/src/main/res/layout/fragment_record.xml" value="0.25" />
+        <entry key="..\:/hoan_chinh/HK4/Mobile/exercise/voice_recorder/app/src/main/res/layout/player_sheet.xml" value="0.2" />
+        <entry key="..\:/hoan_chinh/HK4/Mobile/exercise/voice_recorder/app/src/main/res/layout/single_list_item.xml" value="0.26216216216216215" />
       </map>
     </option>
   </component>
