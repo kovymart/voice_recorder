@@ -117,8 +117,8 @@ public class RecordFragment extends Fragment implements View.OnClickListener {
                     alertDialog.setPositiveButton("OKAY", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            navController.navigate(R.id.action_recordFragment_to_listFragment2);
-                            isRecording = false;
+//                            navController.navigate(R.id.action_recordFragment_to_listFragment2);
+//                            isRecording = false;
                         }
                     });
                     alertDialog.setNegativeButton("CANCEL", null);
@@ -126,7 +126,7 @@ public class RecordFragment extends Fragment implements View.OnClickListener {
                     alertDialog.setMessage("Are you sure, you want to stop the recording?");
                     alertDialog.create().show();
                 } else {
-                    navController.navigate(R.id.action_recordFragment_to_listFragment2);
+//                    navController.navigate(R.id.action_recordFragment_to_listFragment2);
                 }
                 break;
             case R.id.record_btn:

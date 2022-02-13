@@ -98,14 +98,14 @@ public class ListFragment extends Fragment implements AudioListAdapter.onItemLis
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        playerSheet = view.findViewById(R.id.player_sheet);
+        playerSheet = view.findViewById(R.id.record_bottom_sheet);
         bottomSheetBehavior = BottomSheetBehavior.from(playerSheet);
         audioList = view.findViewById(R.id.audio_list_view);
 
-        playBtn = view.findViewById(R.id.player_play_btn);
-        playerHeader = view.findViewById(R.id.player_header_title);
-        playerFileName = view.findViewById(R.id.player_filename);
-        seekBar = view.findViewById(R.id.player_seekbar);
+//        playBtn = view.findViewById(R.id.player_play_btn);
+//        playerHeader = view.findViewById(R.id.player_header_title);
+//        playerFileName = view.findViewById(R.id.player_filename);
+//        seekBar = view.findViewById(R.id.player_seekbar);
 
         String path = getActivity().getExternalFilesDir("/").getAbsolutePath();
         File directory = new File(path);
@@ -131,37 +131,37 @@ public class ListFragment extends Fragment implements AudioListAdapter.onItemLis
             }
         });
 
-        playBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isPlaying) {
-                    pauseAudio();
-                } else {
-                    if (fileToPlay != null) {
-                        resumeAudio();
-                    }
-                }
-            }
-        });
+//        playBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (isPlaying) {
+//                    pauseAudio();
+//                } else {
+//                    if (fileToPlay != null) {
+//                        resumeAudio();
+//                    }
+//                }
+//            }
+//        });
 
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                pauseAudio();
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                int progress = seekBar.getProgress();
-                mediaPlayer.seekTo(progress);
-                resumeAudio();
-            }
-        });
+//        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//
+//            }
+//
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//                pauseAudio();
+//            }
+//
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
+//                int progress = seekBar.getProgress();
+//                mediaPlayer.seekTo(progress);
+//                resumeAudio();
+//            }
+//        });
     }
 
     @Override
