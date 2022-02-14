@@ -34,6 +34,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Time
     private Timer timer;
     private TextView tvTimer;
     private Vibrator vibrator;
+    private WaveformView waveFormView;
 
 
     @Override
@@ -47,6 +48,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Time
         btnRecord = (ImageButton) findViewById(R.id.btnRecord);
         btnRecord.setOnClickListener(this);
         tvTimer = (TextView) findViewById(R.id.tvTimer);
+        waveFormView = (WaveformView) findViewById(R.id.waveFormView);
     }
 
 
@@ -126,5 +128,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Time
     @Override
     public void onTimerTick(String duration) {
         tvTimer.setText(duration);
+        waveFormView.addAmplitude((float) mediaRecorder.getMaxAmplitude());
     }
 }
