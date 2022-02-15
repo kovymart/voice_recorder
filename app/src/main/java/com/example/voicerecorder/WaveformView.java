@@ -34,7 +34,6 @@ public class WaveformView extends View {
     }
 
     public void addAmplitude(float amp) {
-        Log.d("aaaa", String.valueOf(amp));
         Float norm = (float) Math.min(((int) amp) / 7, 400);
         amplitudes.add(norm);
         spikes.clear();
@@ -47,6 +46,15 @@ public class WaveformView extends View {
             spikes.add(new RectF(left, top, right, bottom));
         }
         invalidate();
+    }
+
+    public ArrayList<Float> clear() {
+        ArrayList<Float> amps = (ArrayList<Float>) amplitudes.clone();
+        amplitudes.clear();
+        spikes.clear();
+        invalidate();
+
+        return amps;
     }
 
     @Override

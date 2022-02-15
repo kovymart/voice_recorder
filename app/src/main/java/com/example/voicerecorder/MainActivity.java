@@ -1,7 +1,5 @@
 package com.example.voicerecorder;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
@@ -9,15 +7,25 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
+
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -35,6 +43,16 @@ public class MainActivity extends Activity implements View.OnClickListener, Time
     private TextView tvTimer;
     private Vibrator vibrator;
     private WaveformView waveFormView;
+    private ImageButton btnList;
+    private ImageButton btnDone;
+    private ImageButton btnDelete;
+    private ArrayList<Float> amplitudes = new ArrayList<Float>();
+    private BottomSheetBehavior<LinearLayout> bottomSheetBehavior;
+    private LinearLayout bottomSheet;
+    private View bottomSheetBg;
+    private TextInputEditText fileNameInput;
+    private MaterialButton btnCancel;
+    private MaterialButton btnSave;
 
 
     @Override
@@ -42,13 +60,36 @@ public class MainActivity extends Activity implements View.OnClickListener, Time
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        bottomSheet = (LinearLayout) findViewById(R.id.bottomSheet);
+        bottomSheetBg = (View) findViewById(R.id.bottomSheetBg);
+
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+        bottomSheetBehavior.setPeekHeight(0);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
         timer = new Timer(this::onTimerTick);
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
-        btnRecord = (ImageButton) findViewById(R.id.btnRecord);
-        btnRecord.setOnClickListener(this);
         tvTimer = (TextView) findViewById(R.id.tvTimer);
         waveFormView = (WaveformView) findViewById(R.id.waveFormView);
+
+        btnRecord = (ImageButton) findViewById(R.id.btnRecord);
+        btnRecord.setOnClickListener(this);
+        btnList = (ImageButton) findViewById(R.id.btnList);
+        btnList.setOnClickListener(this);
+        btnDone = (ImageButton) findViewById(R.id.btnDone);
+        btnDone.setOnClickListener(this);
+        btnDelete = (ImageButton) findViewById(R.id.btnDelete);
+        btnDelete.setOnClickListener(this);
+        btnDelete.setEnabled(false);
+
+        fileNameInput = (TextInputEditText) findViewById(R.id.fileNameInput);
+        btnCancel = (MaterialButton) findViewById(R.id.btnCancel);
+        btnCancel.setOnClickListener(this);
+        btnSave = (MaterialButton) findViewById(R.id.btnSave);
+        btnSave.setOnClickListener(this);
+
+        bottomSheetBg.setOnClickListener(this);
     }
 
 
@@ -67,12 +108,46 @@ public class MainActivity extends Activity implements View.OnClickListener, Time
                         isRecording = true;
                         isPaused = false;
                         timer.start();
+                        btnDelete.setEnabled(true);
+                        btnDelete.setImageDrawable(getResources().getDrawable(R.drawable.ic_delete, null));
+                        btnList.setVisibility(View.GONE);
+                        btnDone.setVisibility(View.VISIBLE);
                     }
                 }
                 vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
                 break;
+            case R.id.btnList:
+                Toast.makeText(this, "list", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.btnDone:
+                stopRecorder();
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                bottomSheetBg.setVisibility(View.VISIBLE);
+                fileNameInput.setText(fileName);
+                break;
+            case R.id.btnDelete:
+                stopRecorder();
+                new File(dirPath + "/" + fileName).delete();
+                break;
+            case R.id.btnCancel:
+            case R.id.bottomSheetBg:
+                new File(dirPath + "/" + fileName).delete();
+                dismiss();
+                break;
+            case R.id.btnSave:
+                dismiss();
+//                save();
+                break;
         }
 
+    }
+
+    private void save() {
+        String newFileName = fileNameInput.getText().toString();
+        if (newFileName != fileName) {
+            File newFile = new File(dirPath + "/" + newFileName + ".mp3");
+            new File(dirPath + "/" + fileName).renameTo(newFile);
+        }
     }
 
     private boolean checkPermissions() {
@@ -83,6 +158,20 @@ public class MainActivity extends Activity implements View.OnClickListener, Time
             ActivityCompat.requestPermissions(this, new String[]{recordPermission}, PERMISSION_CODE);
             return false;
         }
+    }
+
+    private void hideKeyboard(View view) {
+        InputMethodManager iMM = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        iMM.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    private void dismiss() {
+        bottomSheetBg.setVisibility(View.GONE);
+        hideKeyboard(fileNameInput);
+
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(() -> bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED), 100);
+
     }
 
     private void startRecording() {
@@ -123,6 +212,17 @@ public class MainActivity extends Activity implements View.OnClickListener, Time
 
     private void stopRecorder() {
         timer.stop();
+        mediaRecorder.stop();
+        mediaRecorder.release();
+        isPaused = false;
+        isRecording = false;
+        btnList.setVisibility(View.VISIBLE);
+        btnDone.setVisibility(View.GONE);
+        btnDelete.setEnabled(false);
+        btnDelete.setImageDrawable(getResources().getDrawable(R.drawable.ic_delete_disable, null));
+        btnRecord.setImageDrawable(getResources().getDrawable(R.drawable.ic_record, null));
+        tvTimer.setText("00:00.00");
+        amplitudes = waveFormView.clear();
     }
 
     @Override
