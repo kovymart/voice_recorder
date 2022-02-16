@@ -28,7 +28,7 @@ import java.io.IOException;
  * Use the {@link ListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ListFragment extends Fragment implements AudioListAdapter.onItemListClick {
+public class ListFragment extends Fragment {
 
     private ConstraintLayout playerSheet;
     private BottomSheetBehavior bottomSheetBehavior;
@@ -107,14 +107,14 @@ public class ListFragment extends Fragment implements AudioListAdapter.onItemLis
 //        playerFileName = view.findViewById(R.id.player_filename);
 //        seekBar = view.findViewById(R.id.player_seekbar);
 
-        String path = getActivity().getExternalFilesDir("/").getAbsolutePath();
-        File directory = new File(path);
-        allFiles = directory.listFiles();
-
-        audioListAdapter = new AudioListAdapter(allFiles, this);
-        audioList.setHasFixedSize(true);
-        audioList.setLayoutManager(new LinearLayoutManager(getContext()));
-        audioList.setAdapter(audioListAdapter);
+//        String path = getActivity().getExternalFilesDir("/").getAbsolutePath();
+//        File directory = new File(path);
+//        allFiles = directory.listFiles();
+//
+//        audioListAdapter = new AudioListAdapter(allFiles, this);
+//        audioList.setHasFixedSize(true);
+//        audioList.setLayoutManager(new LinearLayoutManager(getContext()));
+//        audioList.setAdapter(audioListAdapter);
 
 
         bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
@@ -164,14 +164,14 @@ public class ListFragment extends Fragment implements AudioListAdapter.onItemLis
 //        });
     }
 
-    @Override
-    public void onClickListener(File file, int position) {
-        fileToPlay = file;
-        if (isPlaying) {
-            stopAudio();
-        }
-        playAudio(fileToPlay);
-    }
+//    @Override
+//    public void onClickListener(File file, int position) {
+//        fileToPlay = file;
+//        if (isPlaying) {
+//            stopAudio();
+//        }
+//        playAudio(fileToPlay);
+//    }
 
     private void pauseAudio() {
         mediaPlayer.pause();

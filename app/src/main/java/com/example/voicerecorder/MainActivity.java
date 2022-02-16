@@ -1,9 +1,11 @@
 package com.example.voicerecorder;
 
 import androidx.core.app.ActivityCompat;
+import androidx.room.Room;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
@@ -23,7 +26,10 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -53,12 +59,15 @@ public class MainActivity extends Activity implements View.OnClickListener, Time
     private TextInputEditText fileNameInput;
     private MaterialButton btnCancel;
     private MaterialButton btnSave;
-
+    private AppDatabase db;
+    private String duration = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "audioRecords").allowMainThreadQueries().build();
 
         bottomSheet = (LinearLayout) findViewById(R.id.bottomSheet);
         bottomSheetBg = (View) findViewById(R.id.bottomSheetBg);
@@ -117,7 +126,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Time
                 vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
                 break;
             case R.id.btnList:
-                Toast.makeText(this, "list", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, GalleryActivity.class));
                 break;
             case R.id.btnDone:
                 stopRecorder();
@@ -136,7 +145,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Time
                 break;
             case R.id.btnSave:
                 dismiss();
-//                save();
+                save();
                 break;
         }
 
@@ -148,6 +157,33 @@ public class MainActivity extends Activity implements View.OnClickListener, Time
             File newFile = new File(dirPath + "/" + newFileName + ".mp3");
             new File(dirPath + "/" + fileName).renameTo(newFile);
         }
+
+        String filePath = dirPath + "/" + newFileName + ".mp3";
+        long timestamp = new Date().getTime();
+        String ampsPath = dirPath + "/" + newFileName;
+
+        try {
+            FileOutputStream fos = new FileOutputStream(ampsPath);
+            ObjectOutputStream outputStream = new ObjectOutputStream(fos);
+            outputStream.writeObject(amplitudes);
+            fos.close();
+            outputStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        AudioRecord record = new AudioRecord(newFileName, filePath, timestamp, duration, ampsPath);
+        db.audioRecordDao().insert(record);
+//        final Handler handler = new Handler(Looper.getMainLooper());
+//        Runnable runnable = new Runnable() {
+//            @Override
+//            public void run() {
+//                handler.postDelayed(() -> db.audioRecordDao().insert(record), 100);
+//            }
+//        };
+//        new Thread(runnable).start();
     }
 
     private boolean checkPermissions() {
@@ -228,6 +264,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Time
     @Override
     public void onTimerTick(String duration) {
         tvTimer.setText(duration);
+        this.duration = duration.substring(0, duration.length() - 3);
         waveFormView.addAmplitude((float) mediaRecorder.getMaxAmplitude());
     }
 }
