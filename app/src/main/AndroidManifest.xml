@@ -14,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.VoiceRecorder">
         <activity
+            android:name=".AudioPlayerActivity"
+            android:exported="false" />
+        <activity
             android:name=".GalleryActivity"
             android:exported="false" />
         <activity

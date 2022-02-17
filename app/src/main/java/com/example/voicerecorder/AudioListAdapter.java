@@ -16,16 +16,17 @@ import java.util.List;
 
 public class AudioListAdapter extends RecyclerView.Adapter<AudioListAdapter.AudioViewHolder> {
 
-    private File[] allFiles;
     private TimeAgo timeAgo;
     private ArrayList<AudioRecord> records;
+    private OnItemClickListener onItemClickListener;
 
 
-    public AudioListAdapter(ArrayList<AudioRecord> records) {
+    public AudioListAdapter(ArrayList<AudioRecord> records, OnItemClickListener onItemClickListener) {
         this.records = records;
+        this.onItemClickListener = onItemClickListener;
     }
 
-    public class AudioViewHolder extends RecyclerView.ViewHolder {
+    public class AudioViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         private CheckBox checkbox;
         private TextView tvFileName;
@@ -36,12 +37,26 @@ public class AudioListAdapter extends RecyclerView.Adapter<AudioListAdapter.Audi
             checkbox = itemView.findViewById(R.id.checkbox);
             tvFileName = itemView.findViewById(R.id.tvFileName);
             tvMeta = itemView.findViewById(R.id.tvMeta);
+            itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
-//        @Override
-//        public void onClick(View v) {
-//            onItemListClick.onClickListener(allFiles[getAdapterPosition()], getAdapterPosition());
-//        }
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            if (position != RecyclerView.NO_POSITION) {
+                onItemClickListener.onItemClickListener(position);
+            }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            int position = getAdapterPosition();
+            if (position != RecyclerView.NO_POSITION) {
+                onItemClickListener.onItemLongClickListener(position);
+            }
+            return true;
+        }
     }
 
 
@@ -55,22 +70,16 @@ public class AudioListAdapter extends RecyclerView.Adapter<AudioListAdapter.Audi
 
     @Override
     public void onBindViewHolder(@NonNull AudioListAdapter.AudioViewHolder holder, int position) {
-        if (position != RecyclerView.NO_POSITION){
+        if (position != RecyclerView.NO_POSITION) {
             AudioRecord record = records.get(position);
             holder.tvFileName.setText(record.fileName);
             String strTime = timeAgo.getTimeAgo(record.timestamp);
             holder.tvMeta.setText(String.format("%s %s", record.duration, strTime));
         }
-//        holder.list_date.setText(timeAgo.getTimeAgo(allFiles[position].lastModified()));
     }
 
     @Override
     public int getItemCount() {
         return records.size();
     }
-
-
-//    public interface onItemListClick {
-//        void onClickListener(File file, int position);
-//    }
 }
