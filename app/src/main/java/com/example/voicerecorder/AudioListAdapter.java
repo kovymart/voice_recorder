@@ -11,16 +11,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AudioListAdapter extends RecyclerView.Adapter<AudioListAdapter.AudioViewHolder> {
 
     private File[] allFiles;
     private TimeAgo timeAgo;
-    private List<AudioRecord> records;
+    private ArrayList<AudioRecord> records;
 
 
-    public AudioListAdapter(List<AudioRecord> records) {
+    public AudioListAdapter(ArrayList<AudioRecord> records) {
         this.records = records;
     }
 
@@ -54,13 +55,18 @@ public class AudioListAdapter extends RecyclerView.Adapter<AudioListAdapter.Audi
 
     @Override
     public void onBindViewHolder(@NonNull AudioListAdapter.AudioViewHolder holder, int position) {
-//        holder.list_title.setText(allFiles[position].getName());
+        if (position != RecyclerView.NO_POSITION){
+            AudioRecord record = records.get(position);
+            holder.tvFileName.setText(record.fileName);
+            String strTime = timeAgo.getTimeAgo(record.timestamp);
+            holder.tvMeta.setText(String.format("%s %s", record.duration, strTime));
+        }
 //        holder.list_date.setText(timeAgo.getTimeAgo(allFiles[position].lastModified()));
     }
 
     @Override
     public int getItemCount() {
-        return allFiles.length;
+        return records.size();
     }
 
 
