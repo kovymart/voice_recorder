@@ -19,11 +19,23 @@ public class AudioListAdapter extends RecyclerView.Adapter<AudioListAdapter.Audi
     private TimeAgo timeAgo;
     private ArrayList<AudioRecord> records;
     private OnItemClickListener onItemClickListener;
+    private boolean editMode= false;
 
 
     public AudioListAdapter(ArrayList<AudioRecord> records, OnItemClickListener onItemClickListener) {
         this.records = records;
         this.onItemClickListener = onItemClickListener;
+    }
+
+    public boolean isEditMode() {
+        return editMode;
+    }
+
+    public void setEditMode(boolean mode) {
+        if(editMode != mode) {
+            this.editMode = mode;
+            notifyDataSetChanged();
+        }
     }
 
     public class AudioViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
@@ -75,6 +87,13 @@ public class AudioListAdapter extends RecyclerView.Adapter<AudioListAdapter.Audi
             holder.tvFileName.setText(record.fileName);
             String strTime = timeAgo.getTimeAgo(record.timestamp);
             holder.tvMeta.setText(String.format("%s %s", record.duration, strTime));
+            if (editMode) {
+                holder.checkbox.setVisibility(View.VISIBLE);
+                holder.checkbox.setChecked(record.isChecked);
+            } else {
+                holder.checkbox.setVisibility(View.GONE);
+                holder.checkbox.setChecked(false);
+            }
         }
     }
 

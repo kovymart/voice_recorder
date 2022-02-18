@@ -14,6 +14,9 @@ public interface AudioRecordDao {
     @Query("SELECT * FROM audioRecords")
     List<AudioRecord> getAll();
 
+    @Query("SELECT * FROM audioRecords WHERE fileName LIKE :query")
+    List<AudioRecord> searchDatabase(String query);
+
     @Insert
     void insert(AudioRecord audioRecord);
 
