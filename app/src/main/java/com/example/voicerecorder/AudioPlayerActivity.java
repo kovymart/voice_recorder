@@ -159,6 +159,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
     private void playPausePlayer() {
         if (!mediaPlayer.isPlaying()) {
             mediaPlayer.start();
+
             btnPlay.setBackground(getResources().getDrawable(R.drawable.ic_pause_circle, null));
             handler.postDelayed(runnable, delay);
         } else {

@@ -23,6 +23,13 @@
             android:textSize="20sp" />
     </com.google.android.material.appbar.MaterialToolbar>
 
+    <com.example.voicerecorder.WaveformView
+        android:id="@+id/waveFormViewPlayer"
+        android:layout_width="match_parent"
+        android:layout_height="400px"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.google.android.material.chip.Chip
         android:id="@+id/chip"
         android:layout_width="60dp"

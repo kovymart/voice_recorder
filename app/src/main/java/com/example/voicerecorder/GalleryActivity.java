@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.material.appbar.MaterialToolbar;
@@ -29,10 +30,31 @@ public class GalleryActivity extends AppCompatActivity implements OnItemClickLis
     private TextInputEditText searchInput;
     private MaterialToolbar toolBarList;
 
+    private View editBar;
+    private ImageButton btnClose;
+    private ImageButton btnSelectAll;
+
+    private boolean allCheck = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
+
+        toolBarList = (MaterialToolbar) findViewById(R.id.toolBarList);
+        setSupportActionBar(toolBarList);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        toolBarList.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
+        editBar = (View) findViewById(R.id.editBar);
+        btnClose = (ImageButton) findViewById(R.id.btnClose);
+        btnSelectAll = (ImageButton) findViewById(R.id.btnSelectAll);
 
         records = new ArrayList<>();
         appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "audioRecords").allowMainThreadQueries().build();
@@ -62,14 +84,24 @@ public class GalleryActivity extends AppCompatActivity implements OnItemClickLis
             }
         });
 
-        toolBarList = (MaterialToolbar) findViewById(R.id.toolBarList);
-        setSupportActionBar(toolBarList);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        toolBarList.setNavigationOnClickListener(new View.OnClickListener() {
+        btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                onBackPressed();
+            public void onClick(View v) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setDisplayShowHomeEnabled(true);
+                editBar.setVisibility(View.GONE);
+
+                records.forEach((item) -> item.isChecked = false);
+                audioListAdapter.setEditMode(false);
+            }
+        });
+
+        btnSelectAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                allCheck = !allCheck;
+                records.forEach((item) -> item.isChecked = allCheck);
+                audioListAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -112,6 +144,10 @@ public class GalleryActivity extends AppCompatActivity implements OnItemClickLis
         audioListAdapter.setEditMode(true);
         records.get(position).isChecked = !records.get(position).isChecked;
         audioListAdapter.notifyItemChanged(position);
-
+        if (audioListAdapter.isEditMode() && editBar.getVisibility() == View.GONE) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setDisplayShowHomeEnabled(false);
+            editBar.setVisibility(View.VISIBLE);
+        }
     }
 }

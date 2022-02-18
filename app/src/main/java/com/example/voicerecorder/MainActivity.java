@@ -176,14 +176,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Time
 
         AudioRecord record = new AudioRecord(newFileName, filePath, timestamp, duration, ampsPath);
         db.audioRecordDao().insert(record);
-//        final Handler handler = new Handler(Looper.getMainLooper());
-//        Runnable runnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                handler.postDelayed(() -> db.audioRecordDao().insert(record), 100);
-//            }
-//        };
-//        new Thread(runnable).start();
     }
 
     private boolean checkPermissions() {
